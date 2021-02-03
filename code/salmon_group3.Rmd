@@ -11,6 +11,10 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(janitor)
 library(here)
+library(tsibble)
+library(lubridate)
+library(slider)
+library(feasts)
 ```
 
 ```{r}
