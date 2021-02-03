@@ -37,10 +37,31 @@ Data Citation:
 # Read in the data and clean up column names
 salmon <- read_csv(here("data", "willamette_fish_passage.csv")) %>% 
   clean_names()
+
+salmon_ts <- salmon %>% 
+  mutate(date = lubridate::mdy(date)) %>%  #converts date to readable R form
+  as_tsibble(key = NULL, index = date)
+
+salmon_ds <- salmon_ts %>% 
+  select(date,coho,jack_coho,steelhead)  %>% 
+  replace(is.na(.), 0) %>% 
+  pivot_longer(cols = coho:steelhead, #pivoted longer to 
+  names_to = "species" ,
+  values_to = "count")
+
+ggplot(salmon_ds, aes(date, count)) +
+  geom_line(aes(color = species)) +
+  theme_minimal() +
+  labs(x = "Year", y = "Adult fish count") +
+  scale_color_discrete(name = "Fish species")
 ```
+**Figure 1.** Time series plot for coho, jack coho, and steelhead salmon species counts at the Willamette Falls fish ladder on the Willamette River in Oregon from years 2001 to 2010. Red line indicates times series counts for Coho, green line for Jack coho and blue line for Steelhead. Data: Oregon Department of Fish and Wildlife. Source: https://www.dfw.state.or.us/fish/fish_counts/willamette%20falls.asp
 
+Major trends: 
 
+- Jack coho adult count is low in comparison to Coho and Steelhead through the time series.
 
+- Steelhead adult count appears to be greatest compared to Coho and Jack coho up until later in the year in 2009 calendar year. This similar increase occurs later in 2010 as well.
 
 ### Seasonplots
 
