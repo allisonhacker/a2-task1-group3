@@ -2,11 +2,13 @@
 title: "Willamette River Salmon"
 author: "Allison Hacker, Sydney Rilum, Elmera Azadpour"
 date: "2/2/2021"
-output: html_document
+output: 
+  html_document:
+    code_folding: hide
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 
 library(tidyverse)
 library(janitor)
@@ -15,9 +17,74 @@ library(tsibble)
 library(lubridate)
 library(slider)
 library(feasts)
+library(patchwork)
 ```
 
+## Overview {.tabset}
+
+Image w/ caption
+
+Summary: (3-4 sent)
+
+Map of fish ladder location
+
+Data Citation:
+
+
+### Daily Time Series Data
+
 ```{r}
-salmon <- read_csv(here("data", "willamette_fish_passage.csv"))
+# Read in the data and clean up column names
+salmon <- read_csv(here("data", "willamette_fish_passage.csv")) %>% 
+  clean_names()
 ```
+
+
+
+
+### Seasonplots
+
+```{r}
+# Convert salmon data set into a time series data frame (tsibble)
+salmon_ts <- salmon %>% 
+  mutate(date = lubridate::mdy(date)) %>%  #converts date to readable R form
+  as_tsibble(key = NULL, index = date)
+
+# Create seasonplots
+coho_season <- salmon_ts %>% 
+  gg_season(y = coho) +
+  labs(y = "Coho",
+       x = "",
+       title = "Salmon Seasonplots")
+
+jack_coho_season <- salmon_ts %>% 
+  gg_season(y = jack_coho) +
+  labs(y = "Jack Coho",
+       x = "")
+
+steelhead_season <- salmon_ts %>% 
+  gg_season(y = steelhead) +
+  labs(y = "Steelhead",
+       x = "Month")
+
+# Combine seasonplots into a single compound figure using the `patchwork` package
+coho_season / jack_coho_season / steelhead_season &
+  theme_light() +
+  theme(legend.position = "none") 
+```
+
+**Figure 2.** Seasonplots for coho, jack coho, and steelhead salmon species counts at the Willamette Falls fish ladder on the Willamette River in Oregon. Each colored line represents count data for a single year, including the years 2001 to 2010. Data: ???
+
+Major Trends:
+
+- Coho and jack coho salmon are only present from late August to early November, with counts peaking in the month of October.
+
+- Steelhead salmon are present year-round, with counts highest in the spring (from March to June) and lowest in the fall.
+
+
+
+### Annual Counts
+
+
+
 
