@@ -133,7 +133,7 @@ ggplot(data = salmon_count, aes(x = year, y = total_count, color = species))+
   scale_y_continuous(labels = scales::comma)
 ```
 
-**Figure 3.** Annual count of adult coho (red), jack coho (green), and steelhead (blue) observed at the Willamette Falls fish ladder on the Willamette River from 2001 to 2010. Data source: [Oregon Department of Fish and Wildlife.](https://www.dfw.state.or.us/fish/fish_counts/willamette%20falls.asp)
+**Figure 3.** Annual count of adult coho (red), jack coho (green), and steelhead (blue) fish observed at the Willamette Falls fish ladder on the Willamette River from 2001 to 2010. Data source: [Oregon Department of Fish and Wildlife.](https://www.dfw.state.or.us/fish/fish_counts/willamette%20falls.asp)
 
 **Major Trends:**
 
