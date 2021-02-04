@@ -114,11 +114,13 @@ coho_season / jack_coho_season / steelhead_season &
 ### Summary Statistics and Analysis
 
 ```{r}
+# Summarize annual count by species
 salmon_count <- salmon_ds %>% 
   index_by(year = ~ year(.)) %>% 
   group_by(species) %>% 
   summarise(total_count = sum(count))
 
+# make line graph of annual count by species
 ggplot(data = salmon_count, aes(x = year, y = total_count, color = species))+
   geom_line()+
   geom_point()+

@@ -531,11 +531,13 @@ coho_season / jack_coho_season / steelhead_season &amp;
 </div>
 <div id="summary-statistics-and-analysis" class="section level3">
 <h3>Summary Statistics and Analysis</h3>
-<pre class="r"><code>salmon_count &lt;- salmon_ds %&gt;% 
+<pre class="r"><code># Summarize annual count by species
+salmon_count &lt;- salmon_ds %&gt;% 
   index_by(year = ~ year(.)) %&gt;% 
   group_by(species) %&gt;% 
   summarise(total_count = sum(count))
 
+# make line graph of annual count by species
 ggplot(data = salmon_count, aes(x = year, y = total_count, color = species))+
   geom_line()+
   geom_point()+
