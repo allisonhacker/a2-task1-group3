@@ -17,7 +17,6 @@ library(tsibble)
 library(lubridate)
 library(slider)
 library(feasts)
-library(patchwork)
 ```
 
 ## Overview {.tabset}
@@ -38,6 +37,7 @@ Data Citation:
 salmon <- read_csv(here("data", "willamette_fish_passage.csv")) %>% 
   clean_names()
 
+# Convert salmon data set into a time series data frame (tsibble)
 salmon_ts <- salmon %>% 
   mutate(date = lubridate::mdy(date)) %>%  #converts date to readable R form
   as_tsibble(key = NULL, index = date)
@@ -66,35 +66,19 @@ Major trends:
 ### Seasonplots
 
 ```{r}
-# Convert salmon data set into a time series data frame (tsibble)
-salmon_ts <- salmon %>% 
-  mutate(date = lubridate::mdy(date)) %>%  #converts date to readable R form
-  as_tsibble(key = NULL, index = date)
-
 # Create seasonplots
-coho_season <- salmon_ts %>% 
-  gg_season(y = coho) +
-  labs(y = "Coho",
-       x = "",
-       title = "Salmon Seasonplots")
-
-jack_coho_season <- salmon_ts %>% 
-  gg_season(y = jack_coho) +
-  labs(y = "Jack Coho",
-       x = "")
-
-steelhead_season <- salmon_ts %>% 
-  gg_season(y = steelhead) +
-  labs(y = "Steelhead",
-       x = "Month")
-
-# Combine seasonplots into a single compound figure using the `patchwork` package
-coho_season / jack_coho_season / steelhead_season &
-  theme_light() +
-  theme(legend.position = "none") 
+seasonplot <- salmon_ds %>% 
+  gg_season(y = count) +
+  facet_wrap(~ species, ncol = 1, scales = "free") +
+  theme_minimal() +
+  labs(x = "Month",
+       y = "Count")
+  
+seasonplot
 ```
 
-**Figure 2.** Seasonplots for coho, jack coho, and steelhead salmon species counts at the Willamette Falls fish ladder on the Willamette River in Oregon. Each colored line represents count data for a single year, including the years 2001 to 2010. Data: ???
+
+**Figure 2.** Seasonplots for adult coho, jack coho, and steelhead salmon species counts at the Willamette Falls fish ladder on the Willamette River in Oregon. Each colored line represents count data for a single year, including the years 2001 to 2010. Note the count scales are different for each salmon species. Data: Oregon Department of Fish and Wildlife. Source: https://www.dfw.state.or.us/fish/fish_counts/willamette%20falls.asp
 
 Major Trends:
 
