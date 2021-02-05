@@ -22,6 +22,10 @@ library(feasts)
 
 ## Overview {.tabset}
 
+<center>
+![Fish bypass at the Willamette Falls hydroelectric plant. Source: [Portland Gas and Electric](https://portlandgeneral.com/about/willamette-river)](./images/willamette-river-fish-bypass.jpg)
+
+</center>
 
 Every year, salmon and steelhead pass make their way from the Pacific Ocean up Oregeon's Willamette River to spawn. Fish ladders allow the fish to move past dams and give scientists an opportunity to track their numbers. Daily visual counts of adult fish were conducted at all major dams in the Columbia River basin, including Willamette Falls (see location below). This report will explore adult fish passage at Willamette Falls from 2001 to 2010.
 
@@ -30,8 +34,7 @@ Every year, salmon and steelhead pass make their way from the Pacific Ocean up O
 
 </center>
 
-
-Data Citation:
+Data obtained from [Columbia River DART](http://www.cbr.washington.edu/dart/query/adult_graph_text) (Data Access in Real Time). Data collected by [Oregon Department of Fish and Wildlife.](https://www.dfw.state.or.us/fish/fish_counts/willamette%20falls.asp)
 
 
 ### Daily Time Series Data
@@ -56,13 +59,17 @@ ggplot(salmon_ts, aes(date, count)) +
   geom_line(aes(color = species)) +
   theme_minimal() +
   labs(x = "Year", y = "Adult fish count") +
-  scale_color_discrete(name = "Fish species")
+  scale_color_discrete(name = "Fish Species",
+                       breaks = c("coho", "jack_coho", "steelhead"),
+                       labels = c("Coho", "Jack Coho", "Steelhead"))+
+  scale_y_continuous(labels = scales::comma)
+
 ```
 
 **Figure 1.** Time series plot for coho, jack coho, and steelhead salmon species counts at the Willamette Falls fish ladder on the Willamette River in Oregon from years 2001 to 2010. Red line indicates times series counts for Coho, green line for Jack coho and blue line for Steelhead. Data source: [Oregon Department of Fish and Wildlife.](https://www.dfw.state.or.us/fish/fish_counts/willamette%20falls.asp)
 
 
-Major trends: 
+**Major trends:** 
 
 - Jack coho adult count is low in comparison to Coho and Steelhead through the time series.
 
@@ -89,7 +96,7 @@ seasonplot
 **Figure 2.** Seasonplots for coho, jack coho, and steelhead salmon species counts at the Willamette Falls fish ladder on the Willamette River in Oregon. Each colored line represents count data for a single year, including the years 2001 to 2010. Note the count scales are different for each salmon species. Data source: [Oregon Department of Fish and Wildlife.](https://www.dfw.state.or.us/fish/fish_counts/willamette%20falls.asp)
 
 
-Major Trends:
+**Major Trends:**
 
 - Coho and jack coho salmon are only present from late August to early November, with counts peaking in the month of October.
 
