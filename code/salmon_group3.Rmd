@@ -107,7 +107,58 @@ Major Trends:
 
 
 
+<<<<<<< HEAD
 ### Annual Counts
+=======
+### Summary Statistics and Analysis
+
+```{r}
+# Summarize annual count by species
+salmon_count <- salmon_ds %>% 
+  index_by(year = ~ year(.)) %>% 
+  group_by(species) %>% 
+  summarise(total_count = sum(count))
+
+# make line graph of annual count by species
+ggplot(data = salmon_count, aes(x = year, y = total_count, color = species))+
+  geom_line()+
+  geom_point()+
+  theme_minimal()+
+  labs(x = "Year", y = "Adult fish count")+
+  scale_color_discrete(name = "Fish Species",
+                       breaks = c("coho", "jack_coho", "steelhead"),
+                       labels = c("Coho", "Jack Coho", "Steelhead"))+
+  scale_x_continuous(breaks = 2001:2010)+
+  scale_y_continuous(labels = scales::comma)
+```
+
+**Figure 3.** Annual count of adult coho (red), jack coho (green), and steelhead (blue) fish observed at the Willamette Falls fish ladder on the Willamette River from 2001 to 2010. Data source: [Oregon Department of Fish and Wildlife.](https://www.dfw.state.or.us/fish/fish_counts/willamette%20falls.asp)
+
+**Major Trends:**
+
+- Annual counts of jack coho, the least common species, have remained relatively constant from 2001-2010.
+
+- Annual counts of coho were only slightly higher than jack coho until 2009 when they increased markedly.
+
+- Steelhead counts had the greatest interannual variation. Steelhead was the only species that exhibited a downward trend in annual count.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+>>>>>>> origin
 
 
 
