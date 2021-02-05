@@ -1,30 +1,154 @@
 ---
-title: "salmon_group3"
-author: "Allison Hacker"
+title: "Willamette River Salmon"
+author: "Allison Hacker, Sydney Rilum, Elmera Azadpour"
 date: "2/2/2021"
-output: html_document
+output: 
+  html_document:
+    theme: paper
+    code_folding: hide
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+
+library(tidyverse)
+library(janitor)
+library(here)
+library(tsibble)
+library(lubridate)
+library(slider)
+library(feasts)
 ```
 
-## R Markdown
+## Overview {.tabset}
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+<center>
+![Fish bypass at the Willamette Falls hydroelectric plant. Source: [Portland Gas and Electric](https://portlandgeneral.com/about/willamette-river)](./images/willamette-river-fish-bypass.jpg)
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+</center>
 
-```{r cars}
-summary(cars)
+Every year, salmon and steelhead pass make their way from the Pacific Ocean up Oregeon's Willamette River to spawn. Fish ladders allow the fish to move past dams and give scientists an opportunity to track their numbers. Daily visual counts of adult fish were conducted at all major dams in the Columbia River basin, including Willamette Falls (see location below). This report will explore adult fish passage at Willamette Falls from 2001 to 2010.
+
+<center>
+![Map of Willamette Falls fish ladder location on the Willamette River. Source: [US Army Corps of Engineers, Portland District Website](https://www.nwp.usace.army.mil/willamette/locks/)](./images/Willamette_Falls_Locks_area_map.jpg)
+
+</center>
+
+Data obtained from [Columbia River DART](http://www.cbr.washington.edu/dart/query/adult_graph_text) (Data Access in Real Time). Data collected by [Oregon Department of Fish and Wildlife.](https://www.dfw.state.or.us/fish/fish_counts/willamette%20falls.asp)
+
+
+### Daily Time Series Data
+
+```{r}
+# Read in the data and clean up column names
+salmon <- read_csv(here("data", "willamette_fish_passage.csv")) %>% 
+  clean_names()
+
+# Convert salmon data set into a time series data frame (tsibble)
+salmon_ts <- salmon %>% 
+  mutate(date = lubridate::mdy(date)) %>%  #converts date to readable R form
+  as_tsibble(key = NULL, index = date) %>% 
+  select(date,coho,jack_coho,steelhead)  %>% 
+  replace(is.na(.), 0) %>% 
+  pivot_longer(cols = coho:steelhead, #pivoted longer to 
+  names_to = "species" ,
+  values_to = "count")
+
+# Create time series plot
+ggplot(salmon_ts, aes(date, count)) +
+  geom_line(aes(color = species)) +
+  theme_minimal() +
+  labs(x = "Year", y = "Adult fish count") +
+  scale_color_discrete(name = "Fish Species",
+                       breaks = c("coho", "jack_coho", "steelhead"),
+                       labels = c("Coho", "Jack Coho", "Steelhead"))+
+  scale_y_continuous(labels = scales::comma)
 ```
 
-## Including Plots
+**Figure 1.** Time series plot for coho, jack coho, and steelhead salmon species counts at the Willamette Falls fish ladder on the Willamette River in Oregon from years 2001 to 2010. Red line indicates times series counts for Coho, green line for Jack coho and blue line for Steelhead. Data source: [Oregon Department of Fish and Wildlife.](https://www.dfw.state.or.us/fish/fish_counts/willamette%20falls.asp)
 
-You can also embed plots, for example:
+**Major trends:** 
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+- Jack coho adult count is low in comparison to Coho and Steelhead through the time series.
+
+- Steelhead adult count appears to be greatest compared to Coho and Jack coho up until later in the year in 2009 calendar year. This similar increase occurs later in 2010 as well.
+
+### Seasonplots
+
+```{r}
+# Create fish name character vector to use on plot
+fish_label <- c(`coho` = "Coho", `jack_coho` = "Jack Coho", `steelhead` = "Steelhead")
+
+# Create seasonplots
+seasonplot <- salmon_ts %>% 
+  gg_season(y = count) +
+  facet_wrap(~ species, ncol = 1, scales = "free", labeller = as_labeller(fish_label)) +
+  theme_minimal() +
+  labs(x = "Month",
+       y = "Adult fish count") +
+  theme(legend.title = element_text("Year"))
+  
+seasonplot
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+**Figure 2.** Seasonplots for coho, jack coho, and steelhead salmon species counts at the Willamette Falls fish ladder on the Willamette River in Oregon. Each colored line represents count data for a single year, including the years 2001 to 2010. Note the count scales are different for each salmon species. Data source: [Oregon Department of Fish and Wildlife.](https://www.dfw.state.or.us/fish/fish_counts/willamette%20falls.asp)
+
+**Major Trends:**
+
+- Coho and jack coho salmon are only present from late August to early November, with counts peaking in the month of October.
+
+- Steelhead salmon are present year-round, with counts highest in the spring (from March to June) and lowest in the fall.
+
+
+### Summary Statistics and Analysis
+
+```{r}
+# Summarize annual count by species
+salmon_count <- salmon_ts %>% 
+  index_by(year = ~ year(.)) %>% 
+  group_by(species) %>% 
+  summarise(total_count = sum(count))
+
+# Make line graph of annual count by species
+ggplot(data = salmon_count, aes(x = year, y = total_count, color = species))+
+  geom_line()+
+  geom_point()+
+  theme_minimal()+
+  labs(x = "Year", y = "Adult fish count")+
+  scale_color_discrete(name = "Fish Species",
+                       breaks = c("coho", "jack_coho", "steelhead"),
+                       labels = c("Coho", "Jack Coho", "Steelhead"))+
+  scale_x_continuous(breaks = 2001:2010)+
+  scale_y_continuous(labels = scales::comma)
+```
+
+**Figure 3.** Annual count of adult coho (red), jack coho (green), and steelhead (blue) fish observed at the Willamette Falls fish ladder on the Willamette River from 2001 to 2010. Data source: [Oregon Department of Fish and Wildlife.](https://www.dfw.state.or.us/fish/fish_counts/willamette%20falls.asp)
+
+**Major Trends:**
+
+- Annual counts of jack coho, the least common species, have remained relatively constant from 2001-2010.
+
+- Annual counts of coho were only slightly higher than jack coho until 2009 when they increased markedly.
+
+- Steelhead counts had the greatest interannual variation. Steelhead was the only species that exhibited a downward trend in annual count.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
