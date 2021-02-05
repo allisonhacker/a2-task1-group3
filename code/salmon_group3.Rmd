@@ -27,7 +27,7 @@ Image w/ caption
 
 Summary: (3-4 sent)
 
-Map of fish ladder location:
+Map of fish ladder locations:
 <center>
 ![Map of fish ladder locations. Source: [Columbia Basin Research](http://www.cbr.washington.edu/dart/dartmap)](./images/dartmap.png)
 
