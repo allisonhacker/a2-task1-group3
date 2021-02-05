@@ -26,7 +26,7 @@ library(feasts)
 
 </center>
 
-Every year, salmon and steelhead pass make their way from the Pacific Ocean up Oregeon's Willamette River to spawn. Fish ladders allow the fish to move past dams and give scientists an opportunity to track their numbers. Daily visual counts of adult fish were conducted at all major dams in the Columbia River basin, including Willamette Falls (see location below). This report will explore adult fish passage at Willamette Falls from 2001 to 2010.
+Every year, salmon and steelhead pass make their way from the Pacific Ocean up Oregeon's Willamette River to spawn. Fish ladders allow the fish to move past dams and give scientists an opportunity to track their numbers. Daily visual counts of adult fish were conducted at all major dams in the Columbia River basin, including Willamette Falls (see location below). This report will explore adult fish passage at Willamette Falls from 2001 to 2010..
 
 <center>
 ![Map of Willamette Falls fish ladder location on the Willamette River. Source: [US Army Corps of Engineers, Portland District Website](https://www.nwp.usace.army.mil/willamette/locks/)](./images/Willamette_Falls_Locks_area_map.jpg)
